@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DropCut — Cut Sheet (demo)</title>
+  <meta name="description" content="DropCut: five photos, one song, a 9:16 reel that hard-cuts on the beat. Open source, built on ComfyUI + LTX.">
+  <meta property="og:title" content="DropCut — Cut the drop.">
+  <meta property="og:description" content="Five photos. One song. A vertical reel that hard-cuts on the beat.">
+  <meta property="og:image" content="media/listing-poster.webp">
+  <link rel="icon" type="image/png" href="media/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wdth,wght@75..125,400;75..125,600;75..125,800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#sheet">Skip to the cut sheet</a>
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <header class="mast">
+    <div class="mast-left">
+      <img src="media/logo.webp" alt="DropCut" width="120" height="34">
+      <div class="stack"><strong>DROPCUT</strong><span>ISSUE 01 / OPEN SOURCE</span></div>
+    </div>
+    <time class="timecode js-time">00:00:00:00</time>
+    <div class="mast-right">
+      <span class="badge" title="Samples play rendered reels. Real renders from your photos.">Samples + live render</span>
+      <form class="mast-session" method="post" action="/logout">
+        <span class="mast-judge">{{judge}}</span>
+        <button type="submit" class="mast-signout">Sign out</button>
+      </form>
+      <a class="mast-git" href="https://github.com/venthewise/dropcut" rel="noopener" target="_blank">ENGINE ↗</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <p class="running">CUT LIST · 9:16 · 124 BPM · COMFYUI + LTX · OPEN WEIGHTS · MIT</p>
+      <div class="hero-grid">
+        <div class="hero-type">
+          <h1><span>CUT</span><span>THE</span><span class="acid">DROP.</span></h1>
+          <p class="lede">Five stills. One song. A vertical reel that hard-cuts on the beat, captions locked to the kick. You bring the photos; the beat grid does the editing.</p>
+          <div class="cta-row">
+            <a class="btn solid" href="#sheet">Open the cut sheet</a>
+            <a class="btn line" href="https://github.com/venthewise/dropcut" rel="noopener" target="_blank">See the engine</a>
+          </div>
+        </div>
+        <figure class="sheet-hero" aria-label="Sample reel">
+          <div class="crop"></div>
+          <div class="phone">
+            <video src="media/listing.mp4" poster="media/listing-poster.webp" muted loop playsinline autoplay preload="metadata"></video>
+          </div>
+          <figcaption><span>FRAME A1</span><span>16MM FILM</span><span class="js-time">00:00:00:00</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="block" id="sheet">
+      <header class="block-head">
+        <span>01</span>
+        <h2>The cut sheet</h2>
+        <em>Pick a brief. Hit generate.</em>
+      </header>
+
+      <div class="presets" role="group" aria-label="Source">
+        <button type="button" data-source="samples" aria-pressed="true">Samples</button>
+        <button type="button" data-source="real" aria-pressed="false">Real</button>
+      </div>
+      <div class="presets js-samples" role="group" aria-label="Preset">
+        <button type="button" data-preset="cafe" aria-pressed="true">Café</button>
+        <button type="button" data-preset="gig" aria-pressed="false">Gig</button>
+        <button type="button" data-preset="listing" aria-pressed="false">Listing</button>
+      </div>
+
+      <div class="workbench">
+        <div>
+          <div class="realbox js-real" hidden>
+            <div class="step js-step" hidden><b>STEP 1</b><span>Choose your photos and song, then set the cut.</span></div>
+            <div class="real-grid">
+              <label>Photos
+                <input class="js-photos" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" multiple>
+              </label>
+              <label>Brief
+                <input class="js-brief" type="text" maxlength="180" placeholder="What is this video for / how should it feel" autocomplete="off">
+              </label>
+              <label>Song
+                <select class="js-song-mode">
+                  <option value="sample15" selected>Sample song · 15 s</option>
+                  <option value="sample30">Sample song · 30 s</option>
+                  <option value="sample60">Sample song · 60 s</option>
+                  <option value="upload">Upload audio</option>
+                </select>
+              </label>
+              <label class="js-audio-label" hidden>Audio file
+                <input class="js-audio" type="file" accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.webm">
+              </label>
+              <label>Reel length
+                <select class="js-window">
+                  <option value="5">5 s · 5 photos</option>
+                  <option value="10">10 s · 5 photos</option>
+                  <option value="15" selected>15 s · 5 photos</option>
+                  <option value="30">30 s · 5 to 10 photos</option>
+                  <option value="60">60 s · 10 photos</option>
+                </select>
+              </label>
+              <label>Song start (seconds)
+                <input class="js-window-start" type="number" min="0" max="600" step="0.1" value="0">
+              </label>
+              <label>Caption style
+                <select class="js-cap">
+                  <option value="block">Block</option>
+                  <option value="stamp">Stamp</option>
+                  <option value="lower">Lower third</option>
+                  <option value="kick">On the kick</option>
+                  <option value="promo">Promo</option>
+                </select>
+              </label>
+              <label>Transition
+                <select class="js-trans">
+                  <option value="hard">Hard cut</option>
+                  <option value="flash">Flash</option>
+                  <option value="whip">Whip</option>
+                </select>
+              </label>
+            </div>
+            <div class="cap-colors js-cap-colors" role="radiogroup" aria-label="Caption color"><b>Caption color</b></div>
+            <div class="cap-row"><div class="cap-colors js-cap-size" role="radiogroup" aria-label="Caption size"><b>Caption size</b></div><div class="cap-colors js-cap-align" role="radiogroup" aria-label="Caption alignment"><b>Alignment</b></div></div>
+            <div class="cap-picker js-cap-picker" role="radiogroup" aria-label="Caption style preview"></div>
+            <p class="hint">One shot per photo, in order. Jpg, png, or webp, 25 MB each. 5, 10 and 15 s reels take exactly 5 photos. 30 s reels take 5 to 10 photos. 60 s reels take exactly 10 photos. The song must run at least the reel length from your start point, and it is trimmed to that length with a short fade-out. Your own song can be up to 20 MB.</p>
+            <p class="gate js-gate" role="status" aria-live="polite" hidden></p>
+          </div>
+          <div class="step js-step" hidden><b>STEP 2</b><span>Pick a look and write a caption for each shot. Rearrange the images as needed by dragging them or by using the arrow buttons.</span></div>
+          <div class="frames js-frames"></div>
+          <div class="step js-step" hidden><b>STEP 3</b><span>Review the settings.</span></div>
+          <div class="wavebox">
+            <canvas class="js-wave" width="960" height="120" aria-label="Song waveform with beat grid and cut points"></canvas>
+            <div class="wavebar">
+              <button type="button" class="js-song">▶ Play song</button>
+              <span class="js-wavetime">00:00.00 / 00:15.48</span>
+              <span class="js-waveinfo">124 BPM · 5 CUTS · BARS 0 · 2 · 4 · 5 · 6</span>
+            </div>
+          </div>
+          <dl class="specs js-specs"></dl>
+        </div>
+
+        <aside class="out" aria-live="polite">
+          <div class="step js-step step-go" hidden><b>STEP 4</b><span>Generate!</span></div>
+          <div class="phone">
+            <div class="placeholder js-placeholder"><img alt="" class="js-ph-img"><span>READY TO CUT</span></div>
+            <video class="js-video" playsinline controls preload="none" hidden></video>
+          </div>
+          <div class="progress" aria-hidden="true"><i class="js-bar"></i></div>
+          <ol class="log js-log"><li class="dim">&gt; waiting for generate</li></ol>
+          <div class="actions">
+            <button type="button" class="btn solid js-generate">Generate</button>
+            <button type="button" class="btn line js-cancel" hidden>Cancel</button>
+            <a class="btn line js-download" download hidden>Download</a>
+          </div>
+          <p class="note js-note">Samples play reels the engine already rendered. Real renders each photo, then stitches the reel in the browser.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="block" id="how">
+      <header class="block-head">
+        <span>02</span>
+        <h2>How it works</h2>
+        <em>Three plates. One cut.</em>
+      </header>
+      <ol class="plates">
+        <li>
+          <div class="plate-idx">PLATE 01</div>
+          <h3>Photos + song</h3>
+          <p>Up to five stills and a track. That is the brief. No moodboard committee.</p>
+          <div class="marks" aria-hidden="true"><b>A</b><b>B</b><b>C</b><i>WAV</i></div>
+        </li>
+        <li>
+          <div class="plate-idx">PLATE 02</div>
+          <h3>Beats become cuts</h3>
+          <p>The waveform is a ruler. Bars are registration marks. Every cut lands on a downbeat.</p>
+        </li>
+        <li>
+          <div class="plate-idx">PLATE 03</div>
+          <h3>Reel out</h3>
+          <p>Each still becomes a moving shot via LTX image-to-video, then hard-cut, captioned and muxed with the song.</p>
+          <div class="out-meta">9:16 · H.264 · CAPTIONS BURNED IN</div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="cta" id="get">
+      <h2>MARK THE DROP.</h2>
+      <div class="cta-row">
+        <a class="btn solid" href="#sheet">Try a preset</a>
+        <a class="btn line" href="https://github.com/venthewise/dropcut" rel="noopener" target="_blank">Read the engine</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="colophon">
+    <span>DropCut — open source, made for #OpenSourceHiggsfield</span>
+    <span>END OF SHEET</span>
+    <a href="https://github.com/venthewise/dropcut" rel="noopener" target="_blank">github.com/venthewise/dropcut</a>
+  </footer>
+  <script src="data.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

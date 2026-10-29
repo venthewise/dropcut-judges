@@ -1,0 +1,25 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "",
+  "installCommand": "npm install",
+  "functions": {
+    "api/page.mjs": { "includeFiles": "index.html" },
+    "api/submit.mjs": { "includeFiles": "workflows/**" },
+    "api/status.mjs": { "includeFiles": "workflows/**" },
+    "api/file.mjs": { "includeFiles": "workflows/**", "maxDuration": 60 },
+    "api/upload.mjs": { "maxDuration": 60 }
+  },
+  "rewrites": [
+    { "source": "/login", "destination": "/api/login" },
+    { "source": "/logout", "destination": "/api/logout" },
+    { "source": "/favicon", "destination": "/media/icon.png" },
+    { "source": "/favicon.ico", "destination": "/media/icon.png" }
+  ],
+  "headers": [
+    { "source": "/media/(.*)", "headers": [{ "key": "Cache-Control", "value": "private, max-age=3600" }] },
+    { "source": "/(app.js|data.js|styles.css|lib/cuts.mjs)", "headers": [{ "key": "Cache-Control", "value": "private, no-cache" }] },
+    { "source": "/vendor/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }] },
+    { "source": "/(.*)", "headers": [{ "key": "X-Content-Type-Options", "value": "nosniff" }, { "key": "Referrer-Policy", "value": "same-origin" }, { "key": "X-Robots-Tag", "value": "noindex" }] }
+  ]
+}

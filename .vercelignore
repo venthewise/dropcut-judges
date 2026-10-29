@@ -1,0 +1,9 @@
+.env
+.env.*
+judges.json
+judges-credentials.txt
+.grok
+*.log
+.backup-ui
+test
+.git

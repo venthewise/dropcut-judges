@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+judges.json
+judges-credentials.txt
+.grok/
+*.log
+.backup-ui/
+node_modules/
+.vercel/
+dist/
+.DS_Store
