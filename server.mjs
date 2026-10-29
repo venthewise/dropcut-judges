@@ -12,6 +12,7 @@ import {
   redirect,
   renderIndex,
   send,
+  sendLanding,
   sendLogin,
   sessionUser,
 } from "./lib/web.mjs";
@@ -113,7 +114,11 @@ function handle(req, res, state, runtime) {
 
   const user = sessionUser(req);
   if (!user) {
-    if ((method === "GET" || method === "HEAD") && (pathname === "/" || pathname.endsWith(".html"))) {
+    if ((method === "GET" || method === "HEAD") && pathname === "/") {
+      sendLanding(res);
+      return undefined;
+    }
+    if ((method === "GET" || method === "HEAD") && pathname.endsWith(".html")) {
       redirect(res, "/login");
       return undefined;
     }

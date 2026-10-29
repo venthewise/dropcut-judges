@@ -33,6 +33,7 @@ globalThis.fetch = async (url, init = {}) => {
 const handlers = {
   "/api/login": (await import("../api/login.mjs")).default,
   "/api/logout": (await import("../api/logout.mjs")).default,
+  "/api/landing": (await import("../api/landing.mjs")).default,
   "/api/page": (await import("../api/page.mjs")).default,
   "/api/health": (await import("../api/health.mjs")).default,
   "/api/upload": (await import("../api/upload.mjs")).default,
@@ -72,8 +73,17 @@ function login(password) {
 
 test("vercel: login page, bad and good login, gated page, logout", async () => {
   const home = await realFetch(`${base}/`, { redirect: "manual" });
-  assert.equal(home.status, 302);
-  assert.equal(home.headers.get("location"), "/login");
+  assert.equal(home.status, 200);
+  assert.equal(home.headers.get("location"), null);
+  const door = await home.text();
+  assert.match(door, />USER</);
+  assert.match(door, />JUDGE</);
+  assert.match(door, /href="https:\/\/github.com\/venthewise\/dropcut-judges"/);
+  assert.match(door, /target="_blank"/);
+  assert.match(door, /rel="noopener"/);
+  assert.match(door, /Check out the github repo!/);
+  assert.match(door, /href="\/login"/);
+  assert.equal(/Grok/i.test(door), false);
   const page = await realFetch(`${base}/login`);
   assert.equal(page.status, 200);
   const html = await page.text();

@@ -122,11 +122,6 @@ step("listen constants are the loopback port", () => {
 
 step("redirects to /login when signed out", async () => {
   await withServer(async (base) => {
-    const home = await fetch(`${base}/`, { redirect: "manual" });
-    assert.equal(home.status, 302);
-    assert.equal(home.headers.get("location"), "/login");
-    await home.arrayBuffer();
-
     const index = await fetch(`${base}/index.html`, { redirect: "manual" });
     assert.equal(index.status, 302);
     assert.equal(index.headers.get("location"), "/login");
@@ -146,6 +141,25 @@ step("redirects to /login when signed out", async () => {
     const icon = Buffer.from(await favicon.arrayBuffer());
     const disk = fs.readFileSync(path.join(root, "media", "icon.png"));
     assert.deepEqual(icon.subarray(0, 16), disk.subarray(0, 16));
+  });
+});
+
+step("anonymous / shows the user and judge landing", async () => {
+  await withServer(async (base) => {
+    const home = await fetch(`${base}/`, { redirect: "manual" });
+    assert.equal(home.status, 200);
+    assert.equal(home.headers.get("location"), null);
+    assert.match(home.headers.get("content-type") || "", /text\/html/);
+    const html = await home.text();
+    assert.match(html, />USER</);
+    assert.match(html, />JUDGE</);
+    assert.match(html, /href="https:\/\/github.com\/venthewise\/dropcut-judges"/);
+    assert.match(html, /target="_blank"/);
+    assert.match(html, /rel="noopener"/);
+    assert.match(html, /Check out the github repo!/);
+    assert.match(html, /href="\/login"/);
+    assert.equal(html.includes("js-generate"), false);
+    assert.equal(/<script/i.test(html), false);
   });
 });
 
@@ -173,8 +187,10 @@ step("rejects a bad password", async () => {
     assert.equal(lines.some((line) => /^session=[^;]+/.test(line)), false);
 
     const home = await fetch(`${base}/`, { redirect: "manual" });
-    assert.equal(home.status, 302);
-    await home.arrayBuffer();
+    assert.equal(home.status, 200);
+    assert.equal(home.headers.get("location"), null);
+    const homeHtml = await home.text();
+    assert.equal(homeHtml.includes("js-generate"), false);
   });
 });
 
@@ -255,9 +271,12 @@ step("logout ends the session", async () => {
     await out.arrayBuffer();
 
     const home = await fetch(`${base}/`, { headers: { cookie }, redirect: "manual" });
-    assert.equal(home.status, 302);
-    assert.equal(home.headers.get("location"), "/login");
-    await home.arrayBuffer();
+    assert.equal(home.status, 200);
+    assert.equal(home.headers.get("location"), null);
+    const homeHtml = await home.text();
+    assert.match(homeHtml, /Check out the github repo!/);
+    assert.equal(homeHtml.includes("js-generate"), false);
+    assert.equal(homeHtml.includes("mast-judge"), false);
 
     const media = await fetch(`${base}/media/listing.mp4`, { headers: { cookie }, redirect: "manual" });
     assert.equal(media.status, 401);
@@ -284,8 +303,10 @@ step("rate limit triggers after 5 failures", async () => {
     assert.equal(lines.some((line) => /^session=[^;]+/.test(line)), false);
 
     const home = await fetch(`${base}/`, { redirect: "manual" });
-    assert.equal(home.status, 302);
-    await home.arrayBuffer();
+    assert.equal(home.status, 200);
+    assert.equal(home.headers.get("location"), null);
+    const homeHtml = await home.text();
+    assert.equal(homeHtml.includes("js-generate"), false);
   });
 });
 

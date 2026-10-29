@@ -3,14 +3,16 @@ import assert from "node:assert/strict";
 import { route } from "../lib/edge.mjs";
 
 test("middleware: signed out", () => {
-  assert.deepEqual(route({ pathname: "/" }), { type: "redirect", to: "/login" });
+  assert.deepEqual(route({ pathname: "/" }), { type: "rewrite", to: "/api/landing" });
+  assert.deepEqual(route({ method: "HEAD", pathname: "/" }), { type: "rewrite", to: "/api/landing" });
+  assert.equal(route({ method: "POST", pathname: "/" }).status, 401);
   assert.deepEqual(route({ pathname: "/index.html" }), { type: "redirect", to: "/login" });
   assert.equal(route({ pathname: "/login" }).type, "next");
   assert.equal(route({ method: "POST", pathname: "/login" }).type, "next");
   assert.equal(route({ method: "POST", pathname: "/logout" }).type, "next");
   assert.equal(route({ pathname: "/favicon.ico" }).type, "next");
   assert.equal(route({ pathname: "/vendor/ffmpeg/ffmpeg-core.wasm" }).type, "next");
-  for (const p of ["/media/listing.mp4", "/media/song-60s.m4a", "/app.js", "/styles.css", "/data.js", "/lib/cuts.mjs", "/api/upload", "/api/health", "/api/page"]) {
+  for (const p of ["/media/listing.mp4", "/media/song-60s.m4a", "/app.js", "/styles.css", "/data.js", "/lib/cuts.mjs", "/api/upload", "/api/health", "/api/page", "/api/landing"]) {
     assert.equal(route({ pathname: p }).status, 401, p);
   }
 });
@@ -25,6 +27,7 @@ test("middleware: signed in", () => {
   assert.equal(route({ method: "POST", pathname: "/api/upload", user }).type, "next");
   assert.equal(route({ pathname: "/api/status", user }).type, "next");
   assert.equal(route({ pathname: "/api/page", user }).status, 404);
+  assert.equal(route({ pathname: "/api/landing", user }).status, 404);
 });
 
 test("middleware: source, secrets and traversal never served", () => {
