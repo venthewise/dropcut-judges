@@ -1,6 +1,6 @@
 # DropCut — Cut Sheet demo
 
-Five photos, one song, a 9:16 reel that hard-cuts on the beat. This is the judges' build: a login-gated cut sheet with sample reels and a real render path.
+Video editor? In this economy? Drop in your photos and a song, and DropCut finds the beat, animates each shot and captions it. You get a reel that's ready to post in minutes.
 
 **Samples** play three reels the engine already rendered. **Real** takes 5 to 10 photos, a song, a reel length, and a one-line brief, renders each shot through ComfyUI Cloud, then stitches the reel in the browser.
 
