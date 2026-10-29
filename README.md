@@ -26,7 +26,6 @@ An open-source rebuild of Higgsfield's Urban Cuts, built on ComfyUI and LTX-2.5.
 - [Models](#models)
 - [How it works](#how-it-works)
 - [Run locally (Coming soon)](#run-locally-coming-soon)
-- [Deploy your own (Vercel)](#deploy-your-own-vercel)
 - [Tests](#tests)
 - [Limits](#limits)
 - [Project structure](#project-structure)
