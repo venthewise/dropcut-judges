@@ -144,6 +144,7 @@ function sheetModel() {
     const analysis = real.analysis;
     return {
       bpm: analysis?.bpm || 120,
+      beatStart: analysis?.beats?.[0] || 0,
       duration: analysis?.window || real.windowLen,
       peaks: analysis?.peaks || [],
       segments: analysis?.segments || [],
@@ -469,7 +470,8 @@ function drawWave() {
   ctx.fillStyle = dark ? cssColor("--panel", "#1c1b17") : "#ffffff";
   ctx.fillRect(0, 0, w, h);
   ctx.fillStyle = ink;
-  for (let i = 0, t = 0; t < total; i += 1, t = i * beat) {
+  const offset = (((model.beatStart || 0) % beat) + beat) % beat;
+  for (let i = 0, t = offset; t < total; i += 1, t = offset + i * beat) {
     const downbeat = i % 4 === 0;
     ctx.globalAlpha = downbeat ? 0.35 : 0.12;
     ctx.fillRect(Math.round(xAt(t)), downbeat ? 0 : h * 0.8, dpr, downbeat ? h : h * 0.2);
