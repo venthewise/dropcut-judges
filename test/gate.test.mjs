@@ -161,6 +161,8 @@ step("anonymous / shows the user and judge landing", async () => {
     assert.match(html, /rel="noopener"/);
     assert.match(html, /Check out the github repo!/);
     assert.match(html, /href="\/login"/);
+    assert.match(html, /BACK TO DROPCUT HOMEPAGE/);
+    assert.match(html, /href="https:\/\/dropcut\.moordecai\.com\/"/);
     assert.equal(html.includes("js-generate"), false);
     assert.match(html, /data-theme-toggle/);
     const scripts = [...html.matchAll(/<script\b[^>]*>/gi)].map((match) => match[0]);

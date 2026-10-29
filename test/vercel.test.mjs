@@ -83,6 +83,8 @@ test("vercel: login page, bad and good login, gated page, logout", async () => {
   assert.match(door, /rel="noopener"/);
   assert.match(door, /Check out the github repo!/);
   assert.match(door, /href="\/login"/);
+  assert.match(door, /BACK TO DROPCUT HOMEPAGE/);
+  assert.match(door, /href="https:\/\/dropcut\.moordecai\.com\/"/);
   assert.equal(/Grok/i.test(door), false);
   const page = await realFetch(`${base}/login`);
   assert.equal(page.status, 200);
