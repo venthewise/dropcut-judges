@@ -6,6 +6,33 @@ Five photos, one song, a 9:16 reel that hard-cuts on the beat. This is the judge
 
 The engine (ComfyUI + LTX workflow, render queue, beat-synced export) lives at **[venthewise/dropcut](https://github.com/venthewise/dropcut)**.
 
+## How to run DropCut yourself (Comfy Cloud)
+
+### Part 1: Set up Comfy Cloud (one time)
+
+1. Sign up at [Comfy Cloud](https://cloud.comfy.org/) on a paid plan. The free plan can't be used by apps.
+2. Create an API key in your Comfy account and keep it private.
+3. Download [dropcut-judges](https://github.com/venthewise/dropcut-judges) (green **Code** button, then **Download ZIP**) and unzip it.
+4. In [Comfy Cloud](https://platform.comfy.org/), log in and create a new deployment from the file `workflows/ltx-i2v.api.json` in that folder. That's DropCut's LTX-2.5 image-to-video workflow.
+5. Copy the deployment's endpoint URL once it's running. If you haven't created an API key yet, create one on the same page after the deployment succeeds.
+
+### Part 2: Run DropCut on your computer
+
+1. Install [Node.js](https://nodejs.org/).
+2. In the DropCut folder, make a copy of `.env.example` and rename it `.env`.
+3. Open `.env` and paste in your API key next to `COMFY_CLOUD_API_KEY` and your endpoint URL next to `COMFY_DEPLOYMENT_ENDPOINT`. For `SESSION_SECRET`, replace the placeholder with any long random string.
+4. Open a terminal in the folder and run `node scripts/add-judge.mjs judge1` to make your login. The password is saved in `judges-credentials.txt` and isn't shown on screen.
+5. Run `npm start` and open [http://127.0.0.1:5180](http://127.0.0.1:5180/).
+6. Sign in with `judge1` and the password from that file.
+
+### Part 3: Make a reel
+
+1. Choose **Real**, then add your photos (5 to 10, depending on the length).
+2. Pick a reel length (5, 10, 15, 30 or 60 s) and a sample song or your own.
+3. Set the caption style and press **Generate**. Each photo is animated on your Comfy deployment and paid from your credits, and the final reel is put together in your browser.
+
+**Just looking?** Skip Part 1 and choose **Samples** to watch the café, gig and listing examples without generating anything.
+
 ## Judges (local)
 
 A login gate in front of this demo. The local server listens on 127.0.0.1:5180 only.
