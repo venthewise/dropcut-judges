@@ -178,42 +178,6 @@ The workflow runs on Comfy Cloud as-is.
 
 Running DropCut against ComfyUI on your own GPU isn't supported yet. The app only talks to a Comfy Cloud deployment for now. A local mode is on the roadmap. Until then, use the Comfy Cloud guide above. The app itself already runs on your computer; only the rendering happens in the cloud.
 
-## Deploy your own (Vercel)
-
-<details>
-<summary>Host your own copy on Vercel</summary>
-
-Import the repo in Vercel:
-
-- Framework Preset: **Other**
-- Root Directory: `./` (repo root)
-- Build Command: leave empty (no build). Output Directory: leave empty (repo root is served as static files)
-- Install Command: `npm install` (only installs `@vercel/functions` for the middleware)
-
-`middleware.js` gates every request with the session cookie. `/login` and `/logout` are rewritten to `api/login.mjs` and `api/logout.mjs`; `/` is served by `api/page.mjs` with the judge name filled in. App files and `/media` return 401 when signed out; `/vendor` (ffmpeg.wasm and the Anton font) is public static.
-
-**Environment variables**
-
-| Name | Value |
-| --- | --- |
-| `COMFY_CLOUD_API_KEY` | Comfy Cloud API key |
-| `COMFY_DEPLOYMENT_ENDPOINT` | Comfy deployment endpoint URL |
-| `SESSION_SECRET` | 32+ random characters: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
-| `JUDGE_ACCOUNTS` | Output of `node scripts/add-judge.mjs --env` (JSON of scrypt hashes, no passwords) |
-
-See `.env.example`. Changing `SESSION_SECRET` signs everyone out.
-
-**Add a login**
-
-```bash
-node scripts/add-judge.mjs judge2      # password goes to judges-credentials.txt
-node scripts/add-judge.mjs --env       # prints the new JUDGE_ACCOUNTS value
-```
-
-Paste the printed value into `JUDGE_ACCOUNTS` in Vercel and redeploy.
-
-</details>
-
 ## Tests
 
 ```bash
