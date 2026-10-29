@@ -98,6 +98,10 @@ function handle(req, res, state, runtime) {
   if ((method === "GET" || method === "HEAD") && (pathname === "/favicon" || pathname === "/favicon.ico")) {
     return serveFile(req, res, FAVICON, "image/png");
   }
+  // Public on every page. styles.css and app.js stay behind the session.
+  if ((method === "GET" || method === "HEAD") && pathname === "/theme.js") {
+    return serveFile(req, res, path.join(ROOT, "theme.js"), MIME[".js"]);
+  }
   if (pathname === "/login" && (method === "GET" || method === "HEAD")) {
     if (sessionUser(req)) {
       redirect(res, "/");

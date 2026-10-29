@@ -133,6 +133,9 @@ step("redirects to /login when signed out", async () => {
     assert.match(html, /<h1>Judges access<\/h1>/);
     assert.match(html, /name="username"/);
     assert.match(html, /name="password"/);
+    assert.match(html, /data-theme-toggle/);
+    assert.match(html, /src="\/theme\.js"/);
+    assert.match(html, /class="badge"/);
     assert.equal(html.includes("Unknown username or password."), false);
 
     const favicon = await fetch(`${base}/favicon`);
@@ -159,7 +162,16 @@ step("anonymous / shows the user and judge landing", async () => {
     assert.match(html, /Check out the github repo!/);
     assert.match(html, /href="\/login"/);
     assert.equal(html.includes("js-generate"), false);
-    assert.equal(/<script/i.test(html), false);
+    assert.match(html, /data-theme-toggle/);
+    const scripts = [...html.matchAll(/<script\b[^>]*>/gi)].map((match) => match[0]);
+    assert.deepEqual(scripts, ['<script src="/theme.js">']);
+    assert.equal(html.includes("app.js"), false);
+    assert.equal(html.includes("data.js"), false);
+
+    const theme = await fetch(`${base}/theme.js`);
+    assert.equal(theme.status, 200);
+    assert.match(theme.headers.get("content-type") || "", /javascript/);
+    assert.equal(await theme.text(), fs.readFileSync(path.join(root, "theme.js"), "utf8"));
   });
 });
 
@@ -209,6 +221,8 @@ step("accepts a good login", async () => {
     const disk = fs.readFileSync(path.join(root, "index.html"), "utf8");
     assert.equal(html, disk.replaceAll("{{judge}}", "judge1"));
     assert.match(html, /class="mast-judge">judge1</);
+    assert.match(html, /data-theme-toggle/);
+    assert.match(html, /src="\/theme\.js"/);
     assert.match(html, /Sign out/);
     assert.match(html, /action="\/logout"/);
     assert.match(html, /js-generate/);

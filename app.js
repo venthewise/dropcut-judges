@@ -445,6 +445,11 @@ function paintTimes() {
   });
 }
 
+function cssColor(name, fallback) {
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return value || fallback;
+}
+
 function drawWave() {
   const model = sheetModel();
   const dpr = Math.min(2, devicePixelRatio || 1);
@@ -459,21 +464,26 @@ function drawWave() {
   const total = model.duration || 1;
   const xAt = (t) => (t / total) * w;
   const beat = 60 / model.bpm;
-  ctx.fillStyle = "#fff";
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  const ink = dark ? cssColor("--ink", "#f4f1ea") : "#0a0a0a";
+  ctx.fillStyle = dark ? cssColor("--panel", "#1c1b17") : "#ffffff";
   ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = ink;
   for (let i = 0, t = 0; t < total; i += 1, t = i * beat) {
     const downbeat = i % 4 === 0;
-    ctx.fillStyle = downbeat ? "rgba(10,10,10,0.35)" : "rgba(10,10,10,0.12)";
+    ctx.globalAlpha = downbeat ? 0.35 : 0.12;
     ctx.fillRect(Math.round(xAt(t)), downbeat ? 0 : h * 0.8, dpr, downbeat ? h : h * 0.2);
   }
+  ctx.globalAlpha = 1;
   const peaks = model.peaks.length ? model.peaks : [0.2];
   const bw = w / peaks.length;
   const mid = h * 0.5;
   const played = playhead(total);
+  const dim = dark ? cssColor("--muted", "#c8c3b8") : "#8a8a8a";
   peaks.forEach((peak, i) => {
     const t = (i / peaks.length) * total;
     const amp = Math.max(1, peak * h * 0.42);
-    ctx.fillStyle = played >= t ? "#0a0a0a" : "#8a8a8a";
+    ctx.fillStyle = played >= t ? ink : dim;
     ctx.fillRect(i * bw, mid - amp, Math.max(1, bw - dpr), amp * 2);
   });
   ctx.font = `${11 * dpr}px "IBM Plex Mono", monospace`;
@@ -492,6 +502,8 @@ function drawWave() {
     ctx.fillRect(xAt(played), 0, 2 * dpr, h);
   }
 }
+
+window.addEventListener("dropcut-theme", () => drawWave());
 
 function playhead(total) {
   if (mode === "samples") return song.paused && !song.currentTime ? -1 : song.currentTime;

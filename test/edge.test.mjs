@@ -12,6 +12,8 @@ test("middleware: signed out", () => {
   assert.equal(route({ method: "POST", pathname: "/logout" }).type, "next");
   assert.equal(route({ pathname: "/favicon.ico" }).type, "next");
   assert.equal(route({ pathname: "/vendor/ffmpeg/ffmpeg-core.wasm" }).type, "next");
+  assert.equal(route({ pathname: "/theme.js" }).type, "next");
+  assert.equal(route({ method: "HEAD", pathname: "/theme.js" }).type, "next");
   for (const p of ["/media/listing.mp4", "/media/song-60s.m4a", "/app.js", "/styles.css", "/data.js", "/lib/cuts.mjs", "/api/upload", "/api/health", "/api/page", "/api/landing"]) {
     assert.equal(route({ pathname: p }).status, 401, p);
   }
@@ -21,7 +23,7 @@ test("middleware: signed in", () => {
   const user = "judge1";
   assert.deepEqual(route({ pathname: "/", user }), { type: "rewrite", to: "/api/page" });
   assert.deepEqual(route({ pathname: "/index.html", user }), { type: "rewrite", to: "/api/page" });
-  for (const p of ["/app.js", "/data.js", "/styles.css", "/lib/cuts.mjs", "/media/listing.mp4", "/media/song-30s.m4a", "/media/logo.webp"]) {
+  for (const p of ["/app.js", "/data.js", "/styles.css", "/lib/cuts.mjs", "/theme.js", "/media/listing.mp4", "/media/song-30s.m4a", "/media/logo.webp"]) {
     assert.equal(route({ pathname: p, user }).type, "next", p);
   }
   assert.equal(route({ method: "POST", pathname: "/api/upload", user }).type, "next");
